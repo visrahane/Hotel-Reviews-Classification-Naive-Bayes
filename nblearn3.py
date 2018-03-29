@@ -10,6 +10,7 @@ vocabMap=defaultdict(int);
 classWordMap1=defaultdict(lambda: defaultdict(int));
 classWordMap2=defaultdict(lambda: defaultdict(int));
 
+
 def readFile(fileName):
     inputFileObj=open(fileName,encoding="utf8");
     return inputFileObj;
@@ -37,6 +38,8 @@ def constructTokens(inputFileObj):
         words=doc[3:];
         for word in words:
             word=word.lower();
+            if(word in stopList):
+                continue;
             vocabMap[word]+=1;
             classWordMap1[doc[1]][word]+=1;
             classWordMap2[doc[2]][word] += 1;
@@ -46,13 +49,13 @@ def calculateWordProbs(classWordMap):
     for classs,wordCntMap in classWordMap.items():
         wordsinClass=sum(classWordMap[classs].values());
         for word in vocabMap:
-            classWordMap[classs][word]= (classWordMap[classs][word] + 1) / (vocab + wordsinClass);
+            classWordMap[classs][word]= math.log((classWordMap[classs][word] + 1) / (vocab + wordsinClass));
 
 def calculateProbs():
     noOfDocs=sum(classCountMap.values())/2;
 
     for key in classCountMap:
-        priorClassProps[key]=(classCountMap[key]/noOfDocs);
+        priorClassProps[key]=math.log(classCountMap[key]/noOfDocs);
 
     calculateWordProbs(classWordMap1);
     calculateWordProbs(classWordMap2);
@@ -68,11 +71,12 @@ def calculateProbs():
     #         classWordMap2[classs][word]=(classWordMap2[classs][word]+1)/(vocab+wordsinClass);
 
 inputFileObj=readFile(sys.argv[1]);
+stopList=[line.rstrip() for line in open("input/stop-words.txt",encoding="utf8")];
 constructTokens(inputFileObj);
 calculateProbs();
 saveToFile();
-print("classCountMap:",classCountMap);
-print("priorClassProps:",priorClassProps);
-print("vocab:",vocabMap);
-print("classWordMap:",classWordMap1);
-print("classWordMap:",classWordMap2);
+#print("classCountMap:",classCountMap);
+#print("priorClassProps:",priorClassProps);
+#print("vocab:",vocabMap);
+#print("classWordMap:",classWordMap1);
+#print("classWordMap:",classWordMap2);

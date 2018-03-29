@@ -21,7 +21,7 @@ def getArgmax(classWordMap,words):
         probOfClass = priorClassProps[classs];
         for word in words:
             word = word.lower();
-            probOfClass *= classWordMap[classs].get(word, 1);  # 1 for unknown
+            probOfClass += classWordMap[classs].get(word, 0);  # 0 for unknown
         if (maxProb < probOfClass):
             maxProb = probOfClass;
             argmaxProb = classs;

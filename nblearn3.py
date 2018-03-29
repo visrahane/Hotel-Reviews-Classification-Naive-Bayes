@@ -35,7 +35,7 @@ def constructTokens(inputFileObj):
         doc=line.rstrip().split(" ");
         classCountMap[doc[1]]+=1;
         classCountMap[doc[2]] += 1;
-        words=doc[3:];
+        words=set(doc[3:]);
         for word in words:
             word=word.lower();
             if(word in stopList):
